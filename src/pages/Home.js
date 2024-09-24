@@ -34,6 +34,14 @@ const priorityIcons = {
   4: UrgentPriorityIcon,
 };
 
+const priorityGroupMap = {
+  NoPriority: 0,
+  Low: 1,
+  Medium: 2,
+  High: 3,
+  Urgent: 4,
+};
+
 const Home = () => {
   const [tickets, setTickets] = useState([]);
   const [users, setUsers] = useState([]);
@@ -116,29 +124,6 @@ const Home = () => {
     };
   };
 
-  // const handleDrop = (newGroup, ticketId, type) => {
-  //   setTickets((prevTickets) => {
-  //     const updatedTickets = prevTickets.map((ticket) => {
-  //       if (ticket.id === ticketId) {
-  //         if (type === "status") return { ...ticket, status: newGroup };
-  //         if (type === "user") {
-  //           const selectedUser = users.find((user) => user.name === newGroup);
-  //           return { ...ticket, userId: selectedUser.id };
-  //         }
-  //         if (type === "priority") {
-  //           return { ...ticket, priority: newGroup };
-  //         }
-  //       }
-  //       return ticket;
-  //     });
-
-  //     return updatedTickets;
-  //   });
-  //   setDraggedTicket(null);
-  // };
-
-  // const groupedTickets = groupTickets(sortTickets(tickets));
-
   const handleDrop = (newGroup, ticketId, type) => {
     setTickets((prevTickets) => {
       const updatedTickets = prevTickets.map((ticket) => {
@@ -220,9 +205,12 @@ const Home = () => {
               grouping === "Status"
                 ? statusIcons[group]
                 : grouping === "Priority"
-                ? priorityIcons[group]
+                ? priorityIcons[priorityGroupMap[group]]
+                : grouping === "User"
+                ? svg
                 : null
             }
+            grouping={grouping}
           />
         ))}
       </div>
@@ -273,6 +261,8 @@ const KanbanColumn = ({
             key={ticket.id}
             ticket={ticket}
             users={users}
+            title={title}
+            icon={icon}
             setDraggedTicket={setDraggedTicket}
           />
         ))
@@ -283,7 +273,7 @@ const KanbanColumn = ({
   );
 };
 
-const KanbanCard = ({ ticket, users, setDraggedTicket }) => {
+const KanbanCard = ({ ticket, users, setDraggedTicket, icon }) => {
   const handleDragStart = () => {
     setDraggedTicket(ticket);
   };
@@ -294,6 +284,10 @@ const KanbanCard = ({ ticket, users, setDraggedTicket }) => {
         <span className="ticket-id">{ticket.id}</span>
         <img src={svg} alt="userImg" className="assignee-avatar" />
       </div>
+      {/* {icon && (
+        <img src={icon} alt={`${ticket.title} icon`} className="status-icons" />
+      )} */}
+
       <h4 className="ticket-title">{ticket.title}</h4>
       <div className="card-tags">
         <span className="priority-icon">
@@ -303,7 +297,7 @@ const KanbanCard = ({ ticket, users, setDraggedTicket }) => {
             className="priority-icon"
           />
         </span>
-        <span>{ticket.status}</span>
+        <span>{ticket.tag[0]}</span>
       </div>
     </div>
   );
