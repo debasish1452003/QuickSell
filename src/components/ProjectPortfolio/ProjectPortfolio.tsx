@@ -1,11 +1,13 @@
 import type { NexusProject } from "@/data/nexusDemoRepository";
+import type { PortfolioAnalytics } from "@/domain/workflow/ProjectAnalyticsEngine";
 import "./ProjectPortfolio.css";
 
-export function ProjectPortfolio({ projects }: { projects: NexusProject[] }) {
+export function ProjectPortfolio({ projects, analytics }: { projects: NexusProject[]; analytics: PortfolioAnalytics }) {
   return (
     <article className="panel">
       <div className="panel-header">
         <h2>Portfolio</h2>
+        <span className="portfolio-health" data-health={analytics.health}>{analytics.health.replace("_", " ")}</span>
       </div>
       <div className="portfolio-list">
         {projects.map((project) => (
@@ -18,6 +20,7 @@ export function ProjectPortfolio({ projects }: { projects: NexusProject[] }) {
             <div className="budget-bar" aria-label={`${project.budgetUsed}% budget used`}>
               <div style={{ width: `${project.budgetUsed}%` }} />
             </div>
+            <small>{analytics.completionRate}% complete - {analytics.delayedTasks} delayed tasks</small>
             <small>Release {project.releaseDate}</small>
           </section>
         ))}

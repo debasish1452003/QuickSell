@@ -44,6 +44,15 @@ export class WorkflowGraph {
     this.edges.delete(edgeId);
   }
 
+  public removeNode(nodeId: string): void {
+    this.nodes.delete(nodeId);
+    this.edges.forEach((edge, edgeId) => {
+      if (edge.from === nodeId || edge.to === nodeId) {
+        this.edges.delete(edgeId);
+      }
+    });
+  }
+
   public getNode(id: string): TaskNode | undefined {
     return this.nodes.get(id);
   }

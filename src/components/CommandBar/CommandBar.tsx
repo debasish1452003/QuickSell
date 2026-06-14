@@ -1,5 +1,5 @@
 import { Activity, LockKeyhole, Play, Workflow } from "lucide-react";
-import type { NexusUser } from "@/data/nexusDemoRepository";
+import type { NexusUser } from "@/data/ProjectRepository";
 import type { UserRole } from "@/domain/workflow/types";
 import "./CommandBar.css";
 
@@ -27,8 +27,8 @@ export function CommandBar({ role, user, graphSize, onRoleChange, onGraphSizeCha
         <label>
           <span>Access role</span>
           <select value={role} onChange={(event) => onRoleChange(event.target.value as UserRole)}>
-            <option value="admin">Admin</option>
-            <option value="member">Team member</option>
+            <option value="employer">Employer</option>
+            <option value="employee">Employee</option>
             <option value="client">Client</option>
           </select>
         </label>
@@ -47,7 +47,7 @@ export function CommandBar({ role, user, graphSize, onRoleChange, onGraphSizeCha
           <span>{user.name}</span>
           <strong>{user.role}</strong>
         </div>
-        <div className="live-pill"><Activity size={15} /> deterministic</div>
+        <div className="live-pill"><Activity size={15} /> API backed</div>
       </nav>
     </header>
   );

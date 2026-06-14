@@ -1,0 +1,9 @@
+.hero-graph {
+  height: min(520px, 58vh);
+  min-height: 360px;
+  width: 100%;
+}
+
+.hero-graph canvas {
+  display: block;
+}

@@ -1,4 +1,4 @@
-import type { CriticalPathAnalysis } from "@/domain/workflow/types";
+import type { CriticalPathAnalysis, UserRole } from "@/domain/workflow/types";
 import type { WorkflowGraph } from "@/domain/workflow/WorkflowGraph";
 import { EdgeMeshFactory } from "@/rendering/EdgeMeshFactory";
 import { GraphRaycaster } from "@/rendering/GraphRaycaster";
@@ -46,7 +46,7 @@ export class GraphScene {
     this.animate();
   }
 
-  public renderGraph(graph: WorkflowGraph, analysis: CriticalPathAnalysis, selectedNodeId?: string): RenderStats {
+  public renderGraph(graph: WorkflowGraph, analysis: CriticalPathAnalysis, selectedNodeId?: string, role: UserRole = "employer"): RenderStats {
     this.clear();
     const index = new SpatialIndex();
     const nodes = graph.getNodes();
@@ -55,7 +55,7 @@ export class GraphScene {
 
     nodes.forEach((node) => {
       if (!visibleIds.has(node.id)) return;
-      const mesh = this.nodeFactory.create(node, analysis, selectedNodeId);
+      const mesh = this.nodeFactory.create(node, analysis, selectedNodeId, role);
       this.nodeMeshes.set(node.id, mesh);
       this.scene.add(mesh);
     });
@@ -97,6 +97,7 @@ export class GraphScene {
   }
 
   private animate = (): void => {
+    this.scene.rotation.z = Math.sin(Date.now() / 5000) * 0.012;
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
     this.frameId = requestAnimationFrame(this.animate);

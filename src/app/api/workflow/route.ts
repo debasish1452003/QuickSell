@@ -1,10 +1,10 @@
-import { nexusRepository } from "@/data/nexusDemoRepository";
+import { projectRepository } from "@/data/ProjectRepository";
 import { CriticalPathEngine } from "@/domain/workflow/CriticalPathEngine";
 import { NextResponse } from "next/server";
 
 export function GET(request: Request) {
   const size = Number(new URL(request.url).searchParams.get("size") ?? 180);
-  const graph = nexusRepository.createWorkflowGraph(size);
+  const graph = projectRepository.createWorkflowGraph(size);
   const analysis = new CriticalPathEngine().analyze(graph);
 
   return NextResponse.json({

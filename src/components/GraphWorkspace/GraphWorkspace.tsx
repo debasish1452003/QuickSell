@@ -1,15 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { CriticalPathAnalysis } from "@/domain/workflow/types";
+import type { CriticalPathAnalysis, UserRole } from "@/domain/workflow/types";
 import type { WorkflowGraph } from "@/domain/workflow/WorkflowGraph";
 import { GraphScene, type RenderStats } from "@/rendering/GraphScene";
 import "./GraphWorkspace.css";
 
-export function GraphWorkspace({ graph, analysis, selectedNodeId, onSelectNode }: {
+export function GraphWorkspace({ graph, analysis, selectedNodeId, role, onSelectNode }: {
   graph: WorkflowGraph;
   analysis: CriticalPathAnalysis;
   selectedNodeId?: string;
+  role?: UserRole;
   onSelectNode: (id: string) => void;
 }) {
   const hostRef = useRef<HTMLDivElement | null>(null);
@@ -33,15 +34,15 @@ export function GraphWorkspace({ graph, analysis, selectedNodeId, onSelectNode }
 
   useEffect(() => {
     if (!sceneRef.current) return;
-    setStats(sceneRef.current.renderGraph(graph, analysis, selectedNodeId));
-  }, [graph, analysis, selectedNodeId]);
+    setStats(sceneRef.current.renderGraph(graph, analysis, selectedNodeId, role));
+  }, [graph, analysis, selectedNodeId, role]);
 
   return (
     <article className="panel graph-workspace">
       <div className="panel-header">
         <div>
           <h2>Three.js DAG Planner</h2>
-          <p>Critical path nodes are red. Selected task is blue. Offscreen nodes are culled through a spatial grid.</p>
+          <p>Critical nodes glow red, selected work is blue, and role-safe tasks stay in focus.</p>
         </div>
         <div className="render-stats">
           <span>{stats.visibleNodes} visible</span>

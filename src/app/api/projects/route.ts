@@ -1,6 +1,6 @@
-import { nexusRepository } from "@/data/nexusDemoRepository";
+import { projectRepository } from "@/data/ProjectRepository";
 import { NextResponse } from "next/server";
 
 export function GET() {
-  return NextResponse.json({ projects: nexusRepository.getProjects() });
+  return NextResponse.json({ projects: projectRepository.getProjects() });
 }
