@@ -29,7 +29,7 @@ export function HeroGraph() {
     for (let i = 0; i < 28; i += 1) {
       const mesh = new THREE.Mesh(
         new THREE.SphereGeometry(i % 5 === 0 ? 3.7 : 2.5, 18, 14),
-        new THREE.MeshStandardMaterial({ color: i % 5 === 0 ? "#3867ff" : "#0f9f8f", metalness: 0.28, roughness: 0.35 })
+        new THREE.MeshStandardMaterial({ color: i % 5 === 0 ? "#2563eb" : "#0d9488", metalness: 0.28, roughness: 0.35 })
       );
       mesh.position.set((i % 7) * 18 - 54, Math.floor(i / 7) * 16 - 26, Math.sin(i) * 18);
       nodes.push(mesh);

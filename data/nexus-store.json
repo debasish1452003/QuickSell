@@ -1,0 +1,131 @@
+{
+  "users": [
+    {
+      "id": "u-employer",
+      "name": "Aarav Mehta",
+      "email": "employer@nexusdag.dev",
+      "role": "employer",
+      "title": "Program Director"
+    },
+    {
+      "id": "u-employee",
+      "name": "Neha Rao",
+      "email": "employee@nexusdag.dev",
+      "role": "employee",
+      "title": "Workflow Engineer"
+    },
+    {
+      "id": "u-risk",
+      "name": "Ishan Roy",
+      "email": "risk@nexusdag.dev",
+      "role": "employee",
+      "title": "Risk Analyst"
+    },
+    {
+      "id": "u-client",
+      "name": "Maya Kapoor",
+      "email": "client@nexusdag.dev",
+      "role": "client",
+      "title": "Client Stakeholder"
+    }
+  ],
+  "submissions": [
+    {
+      "id": "sub-001",
+      "taskId": "task-0003",
+      "projectId": "px-core",
+      "employeeId": "u-employee",
+      "submittedAt": "2026-06-13T15:30:00+05:30",
+      "status": "submitted",
+      "notes": "Client approval packet uploaded with dependency notes."
+    },
+    {
+      "id": "sub-002",
+      "taskId": "task-0012",
+      "projectId": "px-mobile",
+      "employeeId": "u-risk",
+      "submittedAt": "2026-06-12T11:00:00+05:30",
+      "status": "approved",
+      "notes": "Release smoke checklist accepted."
+    }
+  ],
+  "projects": [
+    {
+      "id": "px-core",
+      "name": "Atlas Settlement Engine",
+      "client": "Northstar Capital",
+      "clientUserId": "u-client",
+      "employeeIds": [
+        "u-employee",
+        "u-risk"
+      ],
+      "health": "risk",
+      "budgetUsed": 68,
+      "releaseDate": "2026-09-30"
+    },
+    {
+      "id": "px-mobile",
+      "name": "Client Visibility Portal",
+      "client": "HelioWorks",
+      "clientUserId": "u-client",
+      "employeeIds": [
+        "u-employee"
+      ],
+      "health": "on_track",
+      "budgetUsed": 42,
+      "releaseDate": "2026-08-14"
+    }
+  ],
+  "milestones": [
+    {
+      "id": "ms-001",
+      "projectId": "px-core",
+      "title": "Risk model sign-off",
+      "dueDate": "2026-06-18",
+      "status": "upcoming"
+    },
+    {
+      "id": "ms-002",
+      "projectId": "px-core",
+      "title": "Settlement rehearsal",
+      "dueDate": "2026-07-02",
+      "status": "upcoming"
+    },
+    {
+      "id": "ms-003",
+      "projectId": "px-mobile",
+      "title": "Client beta review",
+      "dueDate": "2026-06-10",
+      "status": "late"
+    },
+    {
+      "id": "ms-004",
+      "projectId": "px-mobile",
+      "title": "Pilot release",
+      "dueDate": "2026-06-24",
+      "status": "upcoming"
+    }
+  ],
+  "workProgress": [
+    {
+      "id": "wp-core",
+      "projectId": "px-core",
+      "ownerId": "u-employee",
+      "phase": "Risk sign-off",
+      "percentComplete": 58,
+      "blockerCount": 3,
+      "lastUpdatedAt": "2026-06-14T10:30:00+05:30",
+      "notes": "Settlement dependency review is active with client clarification pending."
+    },
+    {
+      "id": "wp-mobile",
+      "projectId": "px-mobile",
+      "ownerId": "u-employee",
+      "phase": "Beta review",
+      "percentComplete": 72,
+      "blockerCount": 1,
+      "lastUpdatedAt": "2026-06-14T09:15:00+05:30",
+      "notes": "Client portal pilot is on track after smoke checklist approval."
+    }
+  ]
+}

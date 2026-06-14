@@ -1,9 +1,5 @@
-import { authService } from "@/data/AuthService";
-import type { UserRole } from "@/domain/workflow/types";
-import { NextResponse } from "next/server";
+import { authController } from "@/controllers/AuthController";
 
 export async function POST(request: Request) {
-  const body = await request.json().catch(() => ({}));
-  const user = authService.login({ email: body.email, role: body.role as UserRole | undefined });
-  return NextResponse.json({ user });
+  return authController.login(request);
 }

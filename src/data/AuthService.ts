@@ -17,6 +17,17 @@ export class AuthService {
     return this.repository.createUser(input);
   }
 
+  public loginWithGoogle(input: { email: string; name: string; role: UserRole }): NexusUser {
+    const found = this.repository.getUsers().find((user) => user.email.toLowerCase() === input.email.toLowerCase());
+    if (found) return found;
+    return this.repository.createUser({
+      name: input.name,
+      email: input.email,
+      role: input.role,
+      title: input.role === "employer" ? "Google Workspace Admin" : input.role === "client" ? "Client Approver" : "Delivery Assignee",
+    });
+  }
+
   public getSession(role: UserRole = "employer"): NexusUser {
     return this.repository.getUserByRole(role);
   }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useReducer } from "react";
 import { AppShell } from "@/components/AppShell/AppShell";
 import { CommandBar } from "@/components/CommandBar/CommandBar";
 import { ExecutiveSummary } from "@/components/ExecutiveSummary/ExecutiveSummary";
@@ -9,31 +9,31 @@ import { InspectorPanel } from "@/components/InspectorPanel/InspectorPanel";
 import { KanbanBoard } from "@/components/KanbanBoard/KanbanBoard";
 import { ProjectPortfolio } from "@/components/ProjectPortfolio/ProjectPortfolio";
 import { SimulationPanel } from "@/components/SimulationPanel/SimulationPanel";
-import type { DashboardPayload } from "@/data/DashboardService";
-import type { SimulationReport, UserRole } from "@/domain/workflow/types";
+import type { UserRole } from "@/domain/workflow/types";
 import { hydrateGraph } from "@/lib/workflowHydration";
+import { dashboardReducer, initialDashboardState } from "./dashboardReducer";
 
 export default function DashboardPage() {
-  const [role, setRole] = useState<UserRole>("employer");
-  const [graphSize, setGraphSize] = useState(180);
-  const [selectedNodeId, setSelectedNodeId] = useState("task-0001");
-  const [simulation, setSimulation] = useState<SimulationReport | null>(null);
-  const [payload, setPayload] = useState<DashboardPayload | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const saved = window.localStorage.getItem("nexusdag-role") as UserRole | null;
-    if (saved) setRole(saved);
-  }, []);
+  const [state, dispatch] = useReducer(dashboardReducer, initialDashboardState);
+  const { role, graphSize, selectedNodeId, simulation, payload, loading, error } = state;
+  const hasLoadedDashboard = Boolean(payload);
 
   const loadDashboard = useCallback(async () => {
-    setLoading(true);
-    const response = await fetch(`/api/dashboard?role=${role}&size=${graphSize}`, { cache: "no-store" });
+    dispatch({ type: "dashboardLoading" });
+    const params = new URLSearchParams({ size: String(graphSize) });
+    if (hasLoadedDashboard) params.set("role", role);
+    const response = await fetch(`/api/dashboard?${params.toString()}`, { cache: "no-store" });
+    if (response.status === 401) {
+      window.location.href = "/login";
+      return;
+    }
+    if (!response.ok) {
+      dispatch({ type: "dashboardFailed", error: "Dashboard intelligence could not be loaded." });
+      return;
+    }
     const next = await response.json();
-    setPayload(next);
-    setSelectedNodeId(next.nodes[0]?.id ?? "");
-    setLoading(false);
-  }, [graphSize, role]);
+    dispatch({ type: "dashboardLoaded", payload: next });
+  }, [graphSize, hasLoadedDashboard, role]);
 
   useEffect(() => {
     void loadDashboard();
@@ -43,8 +43,7 @@ export default function DashboardPage() {
   const selectedNode = graphState?.graph.getNode(selectedNodeId) ?? graphState?.graph.getNodes()[0];
 
   const handleRoleChange = (nextRole: UserRole) => {
-    window.localStorage.setItem("nexusdag-role", nextRole);
-    setRole(nextRole);
+    dispatch({ type: "roleChanged", role: nextRole });
   };
 
   const runSimulation = async () => {
@@ -54,7 +53,7 @@ export default function DashboardPage() {
       body: JSON.stringify({ size: graphSize, iterations: 3000 }),
     });
     const result = await response.json();
-    setSimulation(result.report);
+    dispatch({ type: "simulationCompleted", report: result.report });
   };
 
   return (
@@ -66,11 +65,13 @@ export default function DashboardPage() {
             user={payload.user}
             graphSize={graphSize}
             onRoleChange={handleRoleChange}
-            onGraphSizeChange={setGraphSize}
+            onGraphSizeChange={(size) => dispatch({ type: "graphSizeChanged", graphSize: size })}
             onRunSimulation={runSimulation}
           />
         ) : null}
-        {loading || !payload || !graphState ? (
+        {error ? (
+          <section className="loading-state">{error}</section>
+        ) : loading || !payload || !graphState ? (
           <section className="loading-state">Loading role-aware workflow intelligence...</section>
         ) : (
           <div className="workspace">
@@ -84,7 +85,7 @@ export default function DashboardPage() {
                 analysis={graphState.analysis}
                 selectedNodeId={selectedNode?.id}
                 role={role}
-                onSelectNode={setSelectedNodeId}
+                onSelectNode={(nodeId) => dispatch({ type: "nodeSelected", nodeId })}
               />
               <KanbanBoard
                 graph={graphState.graph}

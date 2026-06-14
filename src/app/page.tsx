@@ -16,8 +16,8 @@ export default function Home() {
               typed workflow command center.
             </p>
             <div className="hero-actions">
-              <Link className="primary-action" href="/login">Open demo dashboard <ArrowRight size={17} /></Link>
-              <Link className="secondary-action" href="/signup">Create demo account</Link>
+              <Link className="primary-action" href="/login">Open secure dashboard <ArrowRight size={17} /></Link>
+              <Link className="secondary-action" href="/signup">Request workspace access</Link>
             </div>
             <div className="hero-stats">
               <span><CheckCircle2 size={16} /> Role-aware delivery views</span>

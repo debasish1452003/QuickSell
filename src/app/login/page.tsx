@@ -1,5 +1,6 @@
 "use client";
 
+import { LogIn, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppShell } from "@/components/AppShell/AppShell";
@@ -26,30 +27,47 @@ export default function LoginPage() {
   return (
     <AppShell>
       <main className="auth-page">
-        <form className="auth-card" onSubmit={submit}>
-          <p className="eyebrow">Demo access</p>
-          <h1>Login to NexusDAG</h1>
-          <label>
-            <span>Email</span>
-            <input value={email} onChange={(event) => setEmail(event.target.value)} />
-          </label>
-          <label>
-            <span>Role</span>
-            <select
-              value={role}
-              onChange={(event) => {
-                const next = event.target.value as UserRole;
-                setRole(next);
-                setEmail(`${next}@nexusdag.dev`);
-              }}
-            >
-              <option value="employer">Employer</option>
-              <option value="employee">Employee</option>
-              <option value="client">Client</option>
-            </select>
-          </label>
-          <button type="submit">Enter dashboard</button>
-        </form>
+        <section className="auth-card auth-card-wide">
+          <div className="auth-copy">
+            <p className="eyebrow">Google workspace access</p>
+            <h1>Sign in to NexusDAG</h1>
+            <p>
+              Protected routing, role assignment, and client-safe views are handled from your authenticated session.
+            </p>
+            <div className="security-row">
+              <span><ShieldCheck size={16} /> HttpOnly session cookie</span>
+              <span>Role-aware authorization</span>
+            </div>
+          </div>
+          <form className="auth-form" onSubmit={submit}>
+            <label>
+              <span>Workspace role</span>
+              <select
+                value={role}
+                suppressHydrationWarning
+                onChange={(event) => {
+                  const next = event.target.value as UserRole;
+                  setRole(next);
+                  setEmail(`${next}@nexusdag.dev`);
+                }}
+              >
+                <option value="employer">Employer</option>
+                <option value="employee">Employee assignee</option>
+                <option value="client">Client approver</option>
+              </select>
+            </label>
+            <a className="google-button" href={`/api/auth/google?role=${role}`}>
+              <LogIn size={18} />
+              Continue with Google
+            </a>
+            <div className="auth-divider"><span>Enterprise fallback</span></div>
+            <label>
+              <span>Verified email</span>
+              <input value={email} suppressHydrationWarning onChange={(event) => setEmail(event.target.value)} />
+            </label>
+            <button type="submit" suppressHydrationWarning>Continue with assigned role</button>
+          </form>
+        </section>
       </main>
     </AppShell>
   );

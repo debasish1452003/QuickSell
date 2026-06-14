@@ -1,53 +1,34 @@
 "use client";
 
+import { LogIn, UserPlus } from "lucide-react";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { AppShell } from "@/components/AppShell/AppShell";
 import type { UserRole } from "@/domain/workflow/types";
 
 export default function SignupPage() {
-  const router = useRouter();
   const [role, setRole] = useState<UserRole>("employee");
-  const [name, setName] = useState("Demo Contributor");
-  const [email, setEmail] = useState(`demo-${Date.now()}@nexusdag.dev`);
-
-  const submit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    const response = await fetch("/api/auth/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, role }),
-    });
-    const result = await response.json();
-    window.localStorage.setItem("nexusdag-role", result.user.role);
-    window.localStorage.setItem("nexusdag-user", JSON.stringify(result.user));
-    router.push("/dashboard");
-  };
 
   return (
     <AppShell>
       <main className="auth-page">
-        <form className="auth-card" onSubmit={submit}>
-          <p className="eyebrow">Create a demo profile</p>
-          <h1>Sign up for NexusDAG</h1>
+        <section className="auth-card">
+          <div className="auth-icon"><UserPlus size={22} /></div>
+          <p className="eyebrow">Workspace onboarding</p>
+          <h1>Create access</h1>
+          <p className="auth-note">New members join through Google and receive a workspace role assignment.</p>
           <label>
-            <span>Name</span>
-            <input value={name} onChange={(event) => setName(event.target.value)} />
-          </label>
-          <label>
-            <span>Email</span>
-            <input value={email} onChange={(event) => setEmail(event.target.value)} />
-          </label>
-          <label>
-            <span>Role</span>
-            <select value={role} onChange={(event) => setRole(event.target.value as UserRole)}>
-              <option value="employee">Employee</option>
-              <option value="employer">Employer</option>
-              <option value="client">Client</option>
+            <span>Requested role</span>
+          <select value={role} suppressHydrationWarning onChange={(event) => setRole(event.target.value as UserRole)}>
+            <option value="employee">Employee assignee</option>
+            <option value="employer">Employer</option>
+            <option value="client">Client approver</option>
             </select>
           </label>
-          <button type="submit">Create and open dashboard</button>
-        </form>
+          <a className="google-button" href={`/api/auth/google?role=${role}`}>
+            <LogIn size={18} />
+            Continue with Google
+          </a>
+        </section>
       </main>
     </AppShell>
   );

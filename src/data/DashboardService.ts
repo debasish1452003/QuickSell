@@ -3,7 +3,7 @@ import { ProjectAnalyticsEngine, type PortfolioAnalytics } from "@/domain/workfl
 import type { CriticalPathAnalysis, ProjectMilestone, TaskSubmission, UserRole } from "@/domain/workflow/types";
 import type { DependencyEdge } from "@/domain/workflow/DependencyEdge";
 import type { TaskNode } from "@/domain/workflow/TaskNode";
-import { projectRepository, type NexusProject, type NexusUser } from "./ProjectRepository";
+import { projectRepository, type NexusProject, type NexusUser, type NexusWorkProgress } from "./ProjectRepository";
 import type { ProjectRepository } from "./ProjectRepository";
 import { RolePolicy } from "./RolePolicy";
 
@@ -16,6 +16,7 @@ export interface DashboardPayload {
   role: UserRole;
   users: NexusUser[];
   projects: NexusProject[];
+  workProgress: NexusWorkProgress[];
   milestones: ProjectMilestone[];
   submissions: TaskSubmission[];
   nodes: TaskNode[];
@@ -35,10 +36,14 @@ export class DashboardService {
   public constructor(private readonly repository: ProjectRepository = projectRepository) {}
 
   public getDashboard(role: UserRole = "employer", size = 180): DashboardPayload {
-    const user = this.repository.getUserByRole(role);
+    return this.getDashboardForUser(this.repository.getUserByRole(role), role, size);
+  }
+
+  public getDashboardForUser(user: NexusUser, role: UserRole = user.role, size = 180): DashboardPayload {
     const graph = this.repository.createWorkflowGraph(size);
     const projects = this.policy.filterProjects(role, user, this.repository.getProjects());
     const projectIds = new Set(projects.map((project) => project.id));
+    const workProgress = this.repository.getWorkProgress().filter((progress) => projectIds.has(progress.projectId));
     const roleTasks = this.policy.filterTasks(role, user, graph.getNodes()).filter((task) => projectIds.has(task.projectId));
     const roleTaskIds = new Set(roleTasks.map((task) => task.id));
     const roleSubmissions = this.policy
@@ -57,6 +62,7 @@ export class DashboardService {
       role,
       users: this.repository.getUsers(),
       projects,
+      workProgress,
       milestones: this.repository.getMilestones().filter((milestone) => projectIds.has(milestone.projectId)),
       submissions: roleSubmissions,
       nodes: roleGraph.getNodes(),
