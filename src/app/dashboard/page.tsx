@@ -15,7 +15,7 @@ import { dashboardReducer, initialDashboardState } from "./dashboardReducer";
 
 export default function DashboardPage() {
   const [state, dispatch] = useReducer(dashboardReducer, initialDashboardState);
-  const { role, graphSize, selectedNodeId, simulation, payload, loading, error } = state;
+  const { role, graphSize, selectedNodeId, simulation, simulationRunning, payload, loading, error } = state;
   const hasLoadedDashboard = Boolean(payload);
 
   const loadDashboard = useCallback(async () => {
@@ -47,13 +47,22 @@ export default function DashboardPage() {
   };
 
   const runSimulation = async () => {
-    const response = await fetch("/api/simulation", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ size: graphSize, iterations: 3000 }),
-    });
-    const result = await response.json();
-    dispatch({ type: "simulationCompleted", report: result.report });
+    dispatch({ type: "simulationStarted" });
+    try {
+      const response = await fetch("/api/simulation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ size: graphSize, iterations: 3000 }),
+      });
+      if (!response.ok) {
+        dispatch({ type: "simulationFailed" });
+        return;
+      }
+      const result = await response.json();
+      dispatch({ type: "simulationCompleted", report: result.report });
+    } catch {
+      dispatch({ type: "simulationFailed" });
+    }
   };
 
   return (
@@ -67,6 +76,7 @@ export default function DashboardPage() {
             onRoleChange={handleRoleChange}
             onGraphSizeChange={(size) => dispatch({ type: "graphSizeChanged", graphSize: size })}
             onRunSimulation={runSimulation}
+            simulationRunning={simulationRunning}
           />
         ) : null}
         {error ? (
@@ -85,6 +95,7 @@ export default function DashboardPage() {
                 analysis={graphState.analysis}
                 selectedNodeId={selectedNode?.id}
                 role={role}
+                delays={payload.analytics.delayAnalyses}
                 onSelectNode={(nodeId) => dispatch({ type: "nodeSelected", nodeId })}
               />
               <KanbanBoard

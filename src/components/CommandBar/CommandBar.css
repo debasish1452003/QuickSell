@@ -64,6 +64,16 @@
   gap: 8px;
 }
 
+.command-controls button[data-live="true"] {
+  background: #7dd3fc;
+  box-shadow: 0 0 0 4px rgba(125, 211, 252, 0.14);
+}
+
+.command-controls button:disabled {
+  cursor: progress;
+  opacity: 0.9;
+}
+
 .session-pill,
 .live-pill {
   background: #1c2430;

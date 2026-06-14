@@ -1,4 +1,4 @@
-import type { CriticalPathAnalysis, UserRole } from "@/domain/workflow/types";
+import type { CriticalPathAnalysis, DelayAnalysis, UserRole } from "@/domain/workflow/types";
 import type { WorkflowGraph } from "@/domain/workflow/WorkflowGraph";
 import { EdgeMeshFactory } from "@/rendering/EdgeMeshFactory";
 import { GraphRaycaster } from "@/rendering/GraphRaycaster";
@@ -14,6 +14,16 @@ export interface RenderStats {
   renderedEdges: number;
   criticalNodes: number;
   blockedNodes: number;
+  highRiskNodes: number;
+  overdueNodes: number;
+  gatedEdges: number;
+}
+
+export interface GraphRenderOptions {
+  gateOverlay: boolean;
+  riskScan: boolean;
+  slaDrift: boolean;
+  delays: DelayAnalysis[];
 }
 
 export class GraphScene {
@@ -26,6 +36,7 @@ export class GraphScene {
   private readonly raycaster = new GraphRaycaster();
   private readonly nodeMeshes = new Map<string, THREE.Mesh>();
   private readonly renderedNodes = new Map<string, ReturnType<WorkflowGraph["getNodes"]>[number]>();
+  private readonly graphNodes = new Map<string, ReturnType<WorkflowGraph["getNodes"]>[number]>();
   private readonly edgeGroup = new THREE.Group();
   private readonly stagingGroup = new THREE.Group();
   private readonly viewport: GraphViewportController;
@@ -47,7 +58,7 @@ export class GraphScene {
     this.controls.target.set(220, 0, 0);
     this.viewport = new GraphViewportController(this.camera, this.controls);
     this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.shadowMap.type = THREE.PCFShadowMap;
     this.scene.add(new THREE.HemisphereLight("#ffffff", "#d8e6f7", 1.15));
     const light = new THREE.DirectionalLight("#ffffff", 1.35);
     light.position.set(180, -250, 360);
@@ -86,16 +97,25 @@ export class GraphScene {
     this.animate();
   }
 
-  public renderGraph(graph: WorkflowGraph, analysis: CriticalPathAnalysis, selectedNodeId?: string, role: UserRole = "employer"): RenderStats {
+  public renderGraph(
+    graph: WorkflowGraph,
+    analysis: CriticalPathAnalysis,
+    selectedNodeId?: string,
+    role: UserRole = "employer",
+    options: GraphRenderOptions = { gateOverlay: true, riskScan: true, slaDrift: true, delays: [] }
+  ): RenderStats {
     this.clear();
     const index = new SpatialIndex();
     const nodes = graph.getNodes();
+    this.graphNodes.clear();
+    nodes.forEach((node) => this.graphNodes.set(node.id, node));
     index.build(nodes);
     const visibleIds = index.query({ minX: -260, maxX: 1200, minY: -760, maxY: 760 });
+    if (selectedNodeId && graph.getNode(selectedNodeId)) visibleIds.add(selectedNodeId);
 
     nodes.forEach((node) => {
       if (!visibleIds.has(node.id)) return;
-      const mesh = this.nodeFactory.create(node, analysis, selectedNodeId, role);
+      const mesh = this.nodeFactory.create(node, analysis, selectedNodeId, role, options);
       this.nodeMeshes.set(node.id, mesh);
       this.renderedNodes.set(node.id, node);
       this.scene.add(mesh);
@@ -103,25 +123,29 @@ export class GraphScene {
 
     graph.getEdges().forEach((edge) => {
       if (!visibleIds.has(edge.from) || !visibleIds.has(edge.to)) return;
-      const line = this.edgeFactory.create(edge, graph, analysis);
+      const line = this.edgeFactory.create(edge, graph, analysis, options);
       if (line) this.edgeGroup.add(line);
     });
 
+    const visibleNodes = nodes.filter((node) => visibleIds.has(node.id));
     return {
       visibleNodes: visibleIds.size,
       culledNodes: Math.max(0, nodes.length - visibleIds.size),
       renderedEdges: this.edgeGroup.children.length,
       criticalNodes: analysis.criticalNodeIds.filter((id) => visibleIds.has(id)).length,
-      blockedNodes: nodes.filter((node) => visibleIds.has(node.id) && node.status === "blocked").length,
+      blockedNodes: visibleNodes.filter((node) => node.status === "blocked").length,
+      highRiskNodes: options.delays.filter((item) => visibleIds.has(item.taskId) && item.riskLevel === "high").length,
+      overdueNodes: options.delays.filter((item) => visibleIds.has(item.taskId) && item.isOverdue).length,
+      gatedEdges: graph.getEdges().filter((edge) => visibleIds.has(edge.from) && visibleIds.has(edge.to) && edge.kind !== "finish_to_start").length,
     };
   }
 
   public focusNode(nodeId?: string): void {
-    this.viewport.focusNode(nodeId ? this.renderedNodes.get(nodeId) : undefined);
+    this.viewport.focusNode(nodeId ? this.graphNodes.get(nodeId) : undefined);
   }
 
   public frameGraph(): void {
-    this.viewport.frameGraph(Array.from(this.renderedNodes.values()));
+    this.viewport.frameGraph(Array.from(this.graphNodes.values()));
   }
 
   public toggleAutoOrbit(): boolean {

@@ -1,6 +1,6 @@
 .graph-workspace {
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 251, 255, 0.96)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(247, 250, 254, 0.97)),
     #fff;
   min-height: 620px;
   overflow: hidden;
@@ -30,7 +30,9 @@
 }
 
 .graph-kicker,
-.graph-command-strip span {
+.graph-command-strip span,
+.graph-command-strip button,
+.graph-selection-card span {
   align-items: center;
   display: inline-flex;
   gap: 7px;
@@ -58,10 +60,10 @@
 
 .graph-toolbar button {
   align-items: center;
-  background: #0f172a;
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: #fff;
+  border: 1px solid rgba(203, 213, 225, 0.9);
   border-radius: 8px;
-  color: #fff;
+  color: #172033;
   cursor: pointer;
   display: inline-flex;
   font-size: 12px;
@@ -71,20 +73,26 @@
   padding: 0 10px;
 }
 
-.graph-toolbar button:nth-child(2) {
-  background: #fff;
-  border-color: var(--line);
-  color: #172033;
+.graph-toolbar button:hover,
+.graph-command-strip button:hover {
+  transform: translateY(-1px);
 }
 
-.graph-toolbar button:nth-child(3) {
-  background: #ecfeff;
-  border-color: #bae6fd;
-  color: #0e7490;
+.graph-toolbar button[data-active="true"],
+.graph-command-strip button[data-active="true"] {
+  background: #0f172a;
+  border-color: #0f172a;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.14);
+  color: #fff;
+}
+
+.graph-toolbar button:nth-child(2) {
+  background: #f8fafc;
 }
 
 .graph-command-strip {
-  background: #f8fafc;
+  background:
+    linear-gradient(90deg, rgba(240, 249, 255, 0.9), rgba(248, 250, 252, 0.94));
   border-bottom: 1px solid var(--line);
   display: flex;
   flex-wrap: wrap;
@@ -92,15 +100,21 @@
   padding: 10px 18px;
 }
 
-.graph-command-strip span {
+.graph-command-strip span,
+.graph-command-strip button {
   background: #fff;
   border: 1px solid #e2e8f0;
   border-radius: 999px;
   color: #334155;
+  cursor: pointer;
   font-size: 12px;
   font-weight: 800;
   min-height: 30px;
   padding: 0 10px;
+}
+
+.graph-command-strip span {
+  cursor: default;
 }
 
 .render-stats span {
@@ -119,8 +133,9 @@
 
 .graph-canvas-shell {
   background:
-    radial-gradient(circle at 20% 16%, rgba(14, 116, 144, 0.13), transparent 28%),
-    linear-gradient(135deg, #f8fbff, #eef4fb);
+    radial-gradient(circle at 18% 14%, rgba(14, 116, 144, 0.14), transparent 28%),
+    radial-gradient(circle at 78% 24%, rgba(37, 99, 235, 0.11), transparent 30%),
+    linear-gradient(135deg, #fbfdff, #eef4fb);
   min-height: 520px;
   position: relative;
 }
@@ -134,7 +149,8 @@
   display: block;
 }
 
-.graph-overlay-card {
+.graph-overlay-card,
+.graph-selection-card {
   backdrop-filter: blur(18px);
   background: rgba(255, 255, 255, 0.82);
   border: 1px solid rgba(203, 213, 225, 0.88);
@@ -147,9 +163,38 @@
   right: 16px;
 }
 
-.graph-overlay-card strong {
+.graph-selection-card {
+  left: 16px;
+  max-width: min(360px, calc(100% - 32px));
+  right: auto;
+  top: 16px;
+}
+
+.graph-selection-card span {
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.graph-overlay-card strong,
+.graph-selection-card strong {
   display: block;
   font-size: 12px;
+}
+
+.graph-selection-card strong {
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.graph-selection-card p {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  margin: 6px 0 0;
+  text-transform: capitalize;
 }
 
 @media (max-width: 760px) {
@@ -160,6 +205,11 @@
   .graph-overlay-card {
     left: 12px;
     max-width: none;
+    right: 12px;
+  }
+
+  .graph-selection-card {
+    left: 12px;
     right: 12px;
   }
 }

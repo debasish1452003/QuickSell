@@ -8,6 +8,7 @@ export interface DashboardState {
   graphSize: number;
   selectedNodeId: string;
   simulation: SimulationReport | null;
+  simulationRunning: boolean;
   payload: DashboardPayload | null;
   loading: boolean;
   error: string;
@@ -20,13 +21,16 @@ export type DashboardAction =
   | { type: "dashboardLoading" }
   | { type: "dashboardLoaded"; payload: DashboardPayload }
   | { type: "dashboardFailed"; error: string }
-  | { type: "simulationCompleted"; report: SimulationReport };
+  | { type: "simulationStarted" }
+  | { type: "simulationCompleted"; report: SimulationReport }
+  | { type: "simulationFailed" };
 
 export const initialDashboardState: DashboardState = {
   role: "employer",
   graphSize: 180,
   selectedNodeId: "task-0001",
   simulation: null,
+  simulationRunning: false,
   payload: null,
   loading: true,
   error: "",
@@ -53,8 +57,12 @@ export function dashboardReducer(state: DashboardState, action: DashboardAction)
       };
     case "dashboardFailed":
       return { ...state, loading: false, error: action.error };
+    case "simulationStarted":
+      return { ...state, simulationRunning: true };
     case "simulationCompleted":
-      return { ...state, simulation: action.report };
+      return { ...state, simulation: action.report, simulationRunning: false };
+    case "simulationFailed":
+      return { ...state, simulationRunning: false };
     default:
       return state;
   }

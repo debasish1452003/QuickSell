@@ -21,8 +21,9 @@ export class GraphViewportController {
   public focusNode(node: TaskNode | undefined): void {
     if (!node) return;
     const target = new THREE.Vector3(node.position.x, node.position.y, node.position.z);
+    this.autoOrbit = false;
     this.controls.target.copy(target);
-    this.camera.position.set(target.x + 140, target.y - 220, target.z + 180);
+    this.camera.position.set(target.x + 180, target.y - 270, target.z + 220);
     this.camera.lookAt(target);
     this.controls.update();
   }
@@ -33,7 +34,8 @@ export class GraphViewportController {
     nodes.forEach((node) => box.expandByPoint(new THREE.Vector3(node.position.x, node.position.y, node.position.z)));
     const center = box.getCenter(new THREE.Vector3());
     const size = box.getSize(new THREE.Vector3());
-    const distance = Math.max(size.x, size.y, 180) * 0.92;
+    const distance = Math.max(size.x, size.y, 220) * 1.08;
+    this.autoOrbit = false;
     this.controls.target.copy(center);
     this.camera.position.set(center.x + distance, center.y - distance * 1.18, center.z + distance * 0.72);
     this.camera.lookAt(center);

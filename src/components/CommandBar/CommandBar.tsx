@@ -10,9 +10,10 @@ interface CommandBarProps {
   onRoleChange: (role: UserRole) => void;
   onGraphSizeChange: (size: number) => void;
   onRunSimulation: () => void;
+  simulationRunning?: boolean;
 }
 
-export function CommandBar({ role, user, graphSize, onRoleChange, onGraphSizeChange, onRunSimulation }: CommandBarProps) {
+export function CommandBar({ role, user, graphSize, onRoleChange, onGraphSizeChange, onRunSimulation, simulationRunning = false }: CommandBarProps) {
   return (
     <header className="command-bar">
       <div className="brand-cluster">
@@ -38,9 +39,9 @@ export function CommandBar({ role, user, graphSize, onRoleChange, onGraphSizeCha
             {[90, 180, 500, 1200].map((size) => <option key={size} value={size}>{size} tasks</option>)}
           </select>
         </label>
-        <button type="button" onClick={onRunSimulation}>
+        <button type="button" onClick={onRunSimulation} data-live={simulationRunning ? "true" : "false"} disabled={simulationRunning}>
           <Play size={16} />
-          Stress Test
+          {simulationRunning ? "Stress Test Live" : "Stress Test"}
         </button>
         <div className="session-pill">
           <LockKeyhole size={15} />
