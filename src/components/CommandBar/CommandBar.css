@@ -1,0 +1,89 @@
+.command-bar {
+  align-items: center;
+  background: #101418;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  min-height: 84px;
+  padding: 16px 20px;
+}
+
+.brand-cluster,
+.command-controls,
+.session-pill,
+.live-pill {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
+.brand-mark {
+  align-items: center;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border-radius: 10px;
+  display: flex;
+  height: 48px;
+  justify-content: center;
+  width: 48px;
+}
+
+.brand-cluster h1 {
+  font-size: 23px;
+  line-height: 1;
+  margin: 0;
+}
+
+.brand-cluster p {
+  color: #a7b3c3;
+  font-size: 13px;
+  margin: 6px 0 0;
+}
+
+.command-controls label {
+  color: #a7b3c3;
+  display: grid;
+  font-size: 11px;
+  gap: 5px;
+}
+
+.command-controls select,
+.command-controls button {
+  border: 1px solid #344052;
+  border-radius: 8px;
+  min-height: 38px;
+  padding: 0 12px;
+}
+
+.command-controls button {
+  align-items: center;
+  background: var(--accent);
+  color: #061312;
+  cursor: pointer;
+  display: flex;
+  font-weight: 800;
+  gap: 8px;
+}
+
+.session-pill,
+.live-pill {
+  background: #1c2430;
+  border: 1px solid #344052;
+  border-radius: 999px;
+  color: #dbe5f1;
+  font-size: 12px;
+  min-height: 38px;
+  padding: 0 12px;
+}
+
+.session-pill strong {
+  color: #7dd3fc;
+  text-transform: capitalize;
+}
+
+@media (max-width: 1000px) {
+  .command-bar,
+  .command-controls {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

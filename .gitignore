@@ -10,6 +10,12 @@
 
 # production
 /build
+/.next
+
+# local dev server logs
+dev-server*.log
+next-dev*.log
+tsconfig.tsbuildinfo
 
 # misc
 .DS_Store

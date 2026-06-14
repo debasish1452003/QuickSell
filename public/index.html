@@ -2,12 +2,29 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.svg" type="image/svg+xml" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#101418" />
     <meta
       name="description"
-      content="Web site created using create-react-app"
+      content="NexusDAG is a high-performance DAG workflow planner that visualizes task dependencies, computes critical paths, and stress-tests concurrent project mutations."
+    />
+    <meta
+      name="keywords"
+      content="NexusDAG, DAG workflow planner, critical path analysis, topological sort, Three.js graph visualization, project dependency engine"
+    />
+    <meta property="og:title" content="NexusDAG | Deterministic Graph-Based Workflow Planner" />
+    <meta
+      property="og:description"
+      content="Visualize large workflow dependency graphs, recalculate critical paths in real time, and stress-test deterministic task mutation handling."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="%PUBLIC_URL%/logo512.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="NexusDAG | Deterministic Graph-Based Workflow Planner" />
+    <meta
+      name="twitter:description"
+      content="A Three.js-powered dependency engine for DAG workflows, critical path planning, and Monte Carlo stress testing."
     />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
@@ -24,7 +41,17 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>React App</title>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "NexusDAG",
+        "applicationCategory": "ProjectManagementApplication",
+        "operatingSystem": "Web",
+        "description": "A deterministic graph-based workflow planner for visualizing DAG dependencies, computing critical paths, and stress-testing concurrent task mutations."
+      }
+    </script>
+    <title>NexusDAG | Deterministic Graph-Based Workflow Planner</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

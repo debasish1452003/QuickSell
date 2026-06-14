@@ -1,0 +1,39 @@
+.graph-workspace {
+  min-height: 520px;
+  overflow: hidden;
+}
+
+.graph-workspace .panel-header {
+  align-items: flex-start;
+}
+
+.graph-workspace .panel-header p {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 6px 0 0;
+}
+
+.render-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.render-stats span {
+  background: #eef2ff;
+  border-radius: 999px;
+  color: #3730a3;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 6px 8px;
+}
+
+.graph-canvas {
+  height: 470px;
+  width: 100%;
+}
+
+.graph-canvas canvas {
+  display: block;
+}
